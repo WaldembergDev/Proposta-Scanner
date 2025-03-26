@@ -27,8 +27,7 @@ class ControllerConsulta:
       return unicodedata.normalize('NFKD', nome).encode('ascii', 'ignore').decode('ascii').lower()
   
   @classmethod
-  def encontrar_pasta(cls, ano: int, os: int):
-    caminho = Path(r'Z:\QUALYLAB\Q-COMERCIAL')
+  def encontrar_pasta(cls, ano: int, os: int, caminho: Path):
     caminho_ano = caminho / f'OS {ano}'
     for pasta in caminho_ano.iterdir():
       OSs_pasta = ControllerConsulta.obter_numeros(pasta.name)
@@ -93,7 +92,12 @@ class ControllerConsulta:
       ano = resultado[1]
       os = resultado[0]
       empresa = resultado[2]
-      pasta = cls.encontrar_pasta(ano, os)
+      # definindo o caminho onde será procurado as OSs
+      if resultado[2] == 'C&M SERVICOS AMBIENTAIS':
+        caminho = Path(r'Z:\C&M\C-COMERCIAL\C-SERV-PROPOSTAS')
+      else:
+        caminho = Path(r'Z:\QUALYLAB\Q-COMERCIAL')
+      pasta = cls.encontrar_pasta(ano, os, caminho)
       if not pasta:
         arquivos_encontrados = cls.configurar_arquivos(arquivos_procurados) # definindo como todos False
       if pasta:
