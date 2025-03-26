@@ -57,13 +57,14 @@ def procurar_arquivos(arquivos: list, caminho_procurado: Path):
         continue
   return lista_arquivos
 
-def gerar_lista_pendencia(os: int, ano: int, cliente: str, pasta, lista_arquivos: list):
-  lista_final = [('pasta', True) if pasta else ('pasta', False)]
-  lista_final += lista_arquivos
+def gerar_lista_pendencia(lista_arquivos: list):
   pendencias = []
-  for (valor, resultado) in lista_final:
-    if resultado == False:
-      pendencias.append((os, ano, cliente, valor))
+  for (os, ano, cliente, resultado) in lista_arquivos:
+    for pendencia in resultado:
+      if pendencia[1] == False:
+        pendencias.append((os, ano, cliente, pendencia[0]))
+  return pendencias
+
 
 for resultado in lista_teste:
   # caresultados que deverão ser ignorados
@@ -83,18 +84,14 @@ for resultado in lista_teste:
   # Salvando os dados em uma variável mais amigável
   ano = resultado[1]
   os = resultado[0]
-  lista_verificacao = []
+  empresa = resultado[2]
   pasta = encontrar_pasta(ano, os)
+  lista_verificacao = []
   if not pasta:
     arquivos_encontrados = configurar_arquivos(arquivos_procurados) # definindo como todos False
   if pasta:
     arquivos_encontrados = procurar_arquivos(arquivos_procurados, pasta)
-  lista_verificacao.append()
-    
-  
-# Excluir apos testar procurar arquivos
-
-  
-
-
-
+    pasta = True
+  arquivos_encontrados.insert(0, ('pasta', pasta))
+  lista_verificacao.append((os, ano, empresa, arquivos_encontrados))
+lista_pendencias = gerar_lista_pendencia(lista_verificacao)
