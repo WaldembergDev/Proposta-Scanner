@@ -65,33 +65,35 @@ def gerar_lista_pendencia(lista_arquivos: list):
         pendencias.append((os, ano, cliente, pendencia[0]))
   return pendencias
 
-
-for resultado in lista_teste:
-  # caresultados que deverão ser ignorados
-  if resultado[5] == 'Comercial 7' \
-    or resultado[4] == 'Em aprovação' \
-      or resultado[4] == 'Em análise crítica':
-    continue
-  # definir os arquivos/pastas que deverão ser procurados
-  arquivos_procurados = ['solicitacao', 'proposta'] # caso geral - solic, prop
-  if resultado[2] != 'C&M SERVIÇOS AMBIENTAIS':
-    arquivos_procurados += ['aprovacao', 'condicoes comerciais'] # Caso qualy 
-  # definir as revisões que serão procuradadas
-  revisoes = [(f'proposta rev{i+1}', f'solicitacao rev{i+1}') for i in range(resultado[3])] # proposta, solicitação
-  if revisoes:
-    lista_revisoes = configurar_revisoes(revisoes)
-    arquivos_procurados += lista_revisoes
-  # Salvando os dados em uma variável mais amigável
-  ano = resultado[1]
-  os = resultado[0]
-  empresa = resultado[2]
-  pasta = encontrar_pasta(ano, os)
+def obter_lista_pendencias(lista: list):
   lista_verificacao = []
-  if not pasta:
-    arquivos_encontrados = configurar_arquivos(arquivos_procurados) # definindo como todos False
-  if pasta:
-    arquivos_encontrados = procurar_arquivos(arquivos_procurados, pasta)
-    pasta = True
-  arquivos_encontrados.insert(0, ('pasta', pasta))
-  lista_verificacao.append((os, ano, empresa, arquivos_encontrados))
-lista_pendencias = gerar_lista_pendencia(lista_verificacao)
+  for resultado in lista:
+    # caresultados que deverão ser ignorados
+    if resultado[5] == 'Comercial 7' \
+      or resultado[4] == 'Em aprovação' \
+        or resultado[4] == 'Em análise crítica':
+      continue
+    # definir os arquivos/pastas que deverão ser procurados
+    arquivos_procurados = ['solicitacao', 'proposta'] # caso geral - solic, prop
+    if resultado[2] != 'C&M SERVIÇOS AMBIENTAIS':
+      arquivos_procurados += ['aprovacao', 'condicoes comerciais'] # Caso qualy 
+    # definir as revisões que serão procuradadas
+    revisoes = [(f'proposta rev{i+1}', f'solicitacao rev{i+1}') for i in range(resultado[3])] # proposta, solicitação
+    if revisoes:
+      lista_revisoes = configurar_revisoes(revisoes)
+      arquivos_procurados += lista_revisoes
+    # Salvando os dados em uma variável mais amigável
+    ano = resultado[1]
+    os = resultado[0]
+    empresa = resultado[2]
+    pasta = encontrar_pasta(ano, os)
+    if not pasta:
+      arquivos_encontrados = configurar_arquivos(arquivos_procurados) # definindo como todos False
+    if pasta:
+      arquivos_encontrados = procurar_arquivos(arquivos_procurados, pasta)
+      pasta = True
+    arquivos_encontrados.insert(0, ('pasta', pasta))
+    lista_verificacao.append((os, ano, empresa, arquivos_encontrados))
+  lista_pendencias = gerar_lista_pendencia(lista_verificacao)
+  return lista_pendencias
+

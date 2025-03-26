@@ -18,7 +18,7 @@ with col2:
 btn_pesquisar = st.button('Pesquisar')
 if btn_pesquisar:
   resultados = ControllerConsulta.obter_dados(data_inicial, data_final)
-  lista_pendencia = ControllerConsulta.lista_pendencias(resultados)
+  lista_pendencia = ControllerConsulta.obter_lista_pendencias(resultados)
   dataframe = ControllerConsulta.gerar_dataframe(lista_pendencia)
   st.dataframe(dataframe)
 
