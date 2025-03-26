@@ -16,7 +16,7 @@ lista_teste = [
   (3649, 2025, 'APS SOLUCOES COMERCIO E SERVICO LTDA', 0, 'Aprovado', 'Comercial 7'),
   (3650, 2025, 'THELIO MOREIRA LIMA', 0, 'Em aprovação', 'Comercial 1'),
   (3730, 2025, 'THELIO MOREIRA LIMA', 0, 'Aprovado', 'Comercial 1'),
-  (3354, 2025, 'THELIO MOREIRA LIMA', 0, 'Aprovado', 'Comercial 1'),
+  (539, 2025, 'THELIO MOREIRA LIMA', 1, 'Aprovado', 'Comercial 2'),
 ]
 
 # Caminho dos arquivos
@@ -32,22 +32,55 @@ def encontrar_pasta(ano: int, os: int):
       return pasta
   return False
 
-# for resultado in lista_teste:
-#   # caresultados que deverão ser ignorados
-#   if resultado[5] == 'Comercial 7' \
-#     or resultado[4] == 'Em aprovação' \
-#       or resultado[4] == 'Em análise crítica':
-#     continue
-#   # definir os arquivos/pastas que deverão ser procurados
-#   arquivos_padroes = [False, False] # geral - solic, prop
-#   revisoes = [[False, False] for i in range(resultado[3])] # proposta, solicitação
-#   if resultado[0] != 'C&M SERVIÇOS AMBIENTAIS':
-#     arquivos_qualy = [False, False] # Caso qualylab - aprovação, condições comerciais
-#   # Salvando os dados em uma variável mais amigável
-#   ano = resultado[1]
-#   os = resultado[0]
-#   pasta_existe = encontrar_pasta(ano, os)
-#   print(f'OS: {os} - {pasta_existe}')
+def normalizar_nome(nome: str):
+    # sistema de automação busca de OS
+      return unicodedata.normalize('NFKD', nome).encode('ascii', 'ignore').decode('ascii').lower()
+
+def configurar_arquivos(lista_arquivos: list):
+  lista_configurada = [(arquivo, False) for arquivo in lista_arquivos]
+  return lista_configurada
+
+def configurar_revisoes(lista_revisoes: list):
+  revisoes = []
+  for (proposta, solicitacao) in lista_revisoes:
+    revisoes.append(proposta)
+    revisoes.append(solicitacao)
+  return revisoes
+
+def procurar_arquivos(arquivos: list, caminho_procurado: Path):
+  lista_arquivos = configurar_arquivos(arquivos)
+  for i, (arq, valor) in enumerate(lista_arquivos):
+    for arquivo in caminho_procurado.iterdir():
+      nome_ajustado = normalizar_nome(arquivo.name)
+      if arq in nome_ajustado:
+        lista_arquivos[i] = (arq, True)
+        continue
+  return lista_arquivos
+
+for resultado in lista_teste:
+  # caresultados que deverão ser ignorados
+  if resultado[5] == 'Comercial 7' \
+    or resultado[4] == 'Em aprovação' \
+      or resultado[4] == 'Em análise crítica':
+    continue
+  # definir os arquivos/pastas que deverão ser procurados
+  arquivos_procurados = ['solicitacao', 'proposta'] # caso geral - solic, prop
+  if resultado[2] != 'C&M SERVIÇOS AMBIENTAIS':
+    arquivos_procurados += ['aprovacao', 'condicoes comerciais'] # Caso qualy 
+  # definir as revisões que serão procuradadas
+  revisoes = [(f'proposta rev{i+1}', f'solicitacao rev{i+1}') for i in range(resultado[3])] # proposta, solicitação
+  if revisoes:
+    lista_revisoes = configurar_revisoes(revisoes)
+    arquivos_procurados += lista_revisoes
+  # Salvando os dados em uma variável mais amigável
+  ano = resultado[1]
+  os = resultado[0]
+  pasta = encontrar_pasta(ano, os)
+  if not pasta:
+    arquivos_encontrados = configurar_arquivos(arquivos_procurados) # definindo como todos False
+  if pasta:
+    arquivos_encontrados = procurar_arquivos(arquivos_procurados, pasta)
+  
     
-  
-  
+
+# # Excluir apos testar procurar arquivos 
