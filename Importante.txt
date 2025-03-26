@@ -1,0 +1,9 @@
+# Selecionar a data inicial e data final - Feito
+  - Como retorno será uma lista de propostas criadas - Feito
+# Para cada proposta criada deverá ter pasta, solicitação e proposta
+# Se for QualyLab deverá ter condições comerciais
+# Se a proposta tiver sido aprovada, deverá ter aprovação
+# Se a proposta tiver revisão, deverá ter proposta e solicitação conforme o número de revisões
+# Se a proposta tiver sido reprovada, será facultativo a criação dos documentos
+# Se for comercial 7, procurar pelo nome da solicitante, acessar essa pasta e procurar se existe a pasta referente à proposta e se existe pelo menos um documento
+# Se o status for em aprovação ou em análise crítica, pular verificação
