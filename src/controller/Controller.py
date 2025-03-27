@@ -72,10 +72,9 @@ class ControllerConsulta:
   def obter_lista_pendencias(cls, lista: list):
     lista_verificacao = []
     for resultado in lista:
-      # caresultados que deverão ser ignorados
+      # resultados que deverão ser ignorados
       if resultado[5] == 'Comercial 7' \
-        or resultado[4] == 'Em aprovação' \
-          or resultado[4] == 'Em análise crítica':
+        or resultado[4] == 'Em aprovação':
         continue
       # definir os arquivos/pastas que deverão ser procurados
       arquivos_procurados = ['solicitacao', 'proposta'] # caso geral - solic, prop
